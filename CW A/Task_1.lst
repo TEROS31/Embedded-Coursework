@@ -1,0 +1,1139 @@
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;******************************************************************************
+                      00002 ; Coursework A - Mode 1: Interrupt-based PWM with ROM Pattern Storage
+                      00003 ; Student ID: 20508200
+                      00004 ; Board: PICSimLab PIC16F887 (8MHz Clock)
+                      00005 ; LEDs: RD0 (LED1), RD1 (LED2)
+                      00006 ; Button: RB1 (Pattern cycling)
+                      00007 ;
+                      00008 ; DUTY CYCLE PARAMETERS:
+                      00009 ; ----------------------
+                      00010 ; LED1: 20% ? 70% duty cycle
+                      00011 ; LED2: 70% ? 20% duty cycle (opposite direction)
+                      00012 ;
+                      00013 ; TIMER0 CONFIGURATION:
+                      00014 ; ---------------------
+                      00015 ; Fosc = 8MHz ? Instruction cycle = 2MHz (0.5µs)
+                      00016 ; Prescaler = 1:8
+                      00017 ; Timer0 tick rate = 2MHz / 8 = 250kHz (4µs per tick)
+                      00018 ; 
+                      00019 ; PWM TIMING:
+                      00020 ; -----------
+                      00021 ; Target PWM period = 20ms
+                      00022 ; PWM resolution = 100 steps (0-100%)
+                      00023 ; Interrupt interval = 20ms / 100 = 200µs
+                      00024 ; Timer0 ticks needed = 200µs / 4µs = 50 ticks
+                      00025 ; Timer0 preload = 256 - 50 = 206
+                      00026 ;
+                      00027 ; VERIFICATION:
+                      00028 ; -------------
+                      00029 ; Interrupt interval = 50 × 4µs = 200µs ?
+                      00030 ; PWM period = 100 × 200µs = 20ms ?
+                      00031 ; 20% duty = 4ms ON, 16ms OFF
+                      00032 ; 70% duty = 14ms ON, 6ms OFF
+                      00033 ; Transition time = 50 PWM periods/step = 1 second per 1% change
+                      00034 ;
+                      00035 ; BONUS FEATURES:
+                      00036 ; ---------------
+                      00037 ; 4 ROM patterns using DT directives
+                      00038 ; Pattern 0: 20-70% | Pattern 1: 10-40%
+                      00039 ; Pattern 2: 60-90% | Pattern 3: 5-95%
+                      00040 ;******************************************************************************
+                      00041 
+                      00042 #include <p16F887.inc>
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  MPASM PIC16F887 processor include
+                      00005 ; 
+                      00006 ;  (c) Copyright 1999-2012 Microchip Technology, All rights reserved
+                      00007 ;==========================================================================
+                      00008 
+                      00809         LIST
+2007   20C2           00043         __CONFIG _CONFIG1, _LVP_OFF & _FCMEN_OFF & _IESO_OFF & _BOR_OFF & _CPD_OFF & _CP_OFF & _MCLRE_OF
+                            F & _PWRTE_ON & _WDT_OFF & _HS_OSC
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+2008   3EFF           00044         __CONFIG _CONFIG2, _WRT_OFF & _BOR21V
+                      00045 
+                      00046 ;==================== Variable Definitions ====================
+                      00047     cblock  0x20
+  00000020            00048         PWM_Counter         ; Counts interrupt cycles for PWM period (0-100)
+  00000021            00049         LED1_CurrentDuty    ; Current duty cycle for LED1
+  00000022            00050         LED2_CurrentDuty    ; Current duty cycle for LED2
+  00000023            00051         LED1_Direction      ; 0=increasing, 1=decreasing
+  00000024            00052         LED2_Direction      ; 0=increasing, 1=decreasing
+  00000025            00053         Transition_Counter  ; Counter for duty cycle update timing
+  00000026            00054         Pattern_Index       ; Current pattern (0-3)
+  00000027            00055         LED1_Min            ; Current pattern's LED1 minimum
+  00000028            00056         LED1_Max            ; Current pattern's LED1 maximum
+  00000029            00057         LED2_Min            ; Current pattern's LED2 minimum
+  0000002A            00058         LED2_Max            ; Current pattern's LED2 maximum
+  0000002B            00059         Button_Debounce     ; Debounce counter for button
+  0000002C            00060         Temp                ; Temporary variable
+                      00061     endc
+                      00062 
+                      00063 ;==================== Constants ====================
+                      00064 #define LED1        PORTD,0     ; RD0 (first LED on PORTD)
+                      00065 #define LED2        PORTD,1     ; RD1 (second LED on PORTD)
+                      00066 #define BUTTON      PORTB,1     ; RB1 for pattern cycling
+                      00067 #define PWM_PERIOD  d'100'      ; 100 steps = direct % mapping (0-100%)
+                      00068 
+                      00069 #define TRANSITION_DELAY d'50'  ; PWM periods between duty cycle updates
+                      00070 #define DEBOUNCE_DELAY   d'20'  ; Button debounce delay
+                      00071 
+                      00072 ;==================== Reset Vector ====================
+0000                  00073     org     0x0000
+0000   2830           00074     goto    Start
+                      00075 
+                      00076 ;==================== Interrupt Vector ====================
+0004                  00077     org     0x0004
+0004   28A1           00078     goto    ISR_Handler
+                      00079 
+                      00080 ;==================== ROM Pattern Storage (BONUS FEATURE) ====================
+                      00081 ; Store patterns at address 0x0010 to avoid conflicts
+0010                  00082     org     0x0010
+                      00083 
+                      00084 ; Each pattern contains: LED1_Min, LED1_Max, LED2_Min, LED2_Max
+                      00085 ; Stored in program memory using DT (Define Table) directive
+0010                  00086 Pattern_Table:
+                      00087     ; Pattern 0: Default (20-70%) - Original requirement
+0010   3414 3446 3414 00088     DT      d'20', d'70', d'20', d'70'
+       3446 
+                      00089     
+                      00090     ; Pattern 1: Low Range (10-40%) - Subtle, dim pulsing
+0014   340A 3428 340A 00091     DT      d'10', d'40', d'10', d'40'
+       3428 
+                      00092     
+                      00093     ; Pattern 2: High Range (60-90%) - Bright, energetic
+0018   343C 345A 343C 00094     DT      d'60', d'90', d'60', d'90'
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+       345A 
+                      00095     
+                      00096     ; Pattern 3: Full Range (5-95%) - Maximum contrast
+001C   3405 345F 3405 00097     DT      d'5',  d'95', d'5',  d'95'
+       345F 
+                      00098 
+                      00099 ;==================== Main Program ====================
+0030                  00100     org     0x0030
+                      00101 
+0030                  00102 Start:
+                      00103     ; Configure Ports - PIC16F887 specific
+0030   1683           00104     bsf     STATUS, RP0     ; Bank 1
+0031   1703           00105     bsf     STATUS, RP1     ; Bank 2
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0032   0188           00106     clrf    ANSEL           ; Digital I/O for PORTA/PORTD
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0033   0189           00107     clrf    ANSELH          ; Digital I/O for PORTB
+                      00108     
+0034   1683           00109     bsf     STATUS, RP0     ; Bank 1
+0035   1303           00110     bcf     STATUS, RP1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0036   0188           00111     clrf    TRISD           ; All PORTD as output (LEDs)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0037   0186           00112     clrf    TRISB           ; All PORTB as output initially
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0038   1486           00113     bsf     TRISB,1         ; RB1 as input (button)
+                      00114     
+                      00115     ; Configure Timer0 for 8MHz clock
+0039   3002           00116     movlw   b'00000010'     ; Timer0: prescaler 1:8
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+003A   0081           00117     movwf   OPTION_REG
+                      00118     
+003B   1283           00119     bcf     STATUS, RP0     ; Bank 0
+003C   1303           00120     bcf     STATUS, RP1
+                      00121     
+                      00122     ; Enable Interrupts
+003D   30A0           00123     movlw   b'10100000'     ; GIE=1, T0IE=1
+003E   008B           00124     movwf   INTCON
+                      00125     
+003F   0188           00126     clrf    PORTD           ; Clear all LEDs
+                      00127     
+                      00128     ; Initialize Timer0 with preload value
+0040   30CE           00129     movlw   d'206'          ; Preload for 200µs interval
+0041   0081           00130     movwf   TMR0
+                      00131     
+                      00132     ; Initialize pattern system - Load Pattern 0 (default)
+0042   01A6           00133     clrf    Pattern_Index   ; Start with pattern 0 (20-70%)
+0043   2069           00134     call    Load_Pattern    ; Load pattern from ROM
+                      00135     
+                      00136     ; Add small delay to ensure pattern loads before interrupts start
+0044   3064           00137     movlw   d'100'
+0045   00AC           00138     movwf   Temp
+0046                  00139 Init_Delay:
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0046   0BAC           00140     decfsz  Temp, F
+0047   2846           00141     goto    Init_Delay
+                      00142     
+                      00143     ; Initialize PWM variables with loaded pattern
+                      00144     ; LED1 starts at MINIMUM and increases
+0048   0827           00145     movf    LED1_Min, W
+0049   00A1           00146     movwf   LED1_CurrentDuty
+004A   01A3           00147     clrf    LED1_Direction  ; 0 = increasing
+                      00148     
+                      00149     ; LED2 starts at MAXIMUM and decreases (OPPOSITE DIRECTION)
+004B   082A           00150     movf    LED2_Max, W
+004C   00A2           00151     movwf   LED2_CurrentDuty
+004D   3001           00152     movlw   0x01
+004E   00A4           00153     movwf   LED2_Direction  ; 1 = decreasing
+                      00154     
+004F   01A0           00155     clrf    PWM_Counter
+0050   01A5           00156     clrf    Transition_Counter
+0051   01AB           00157     clrf    Button_Debounce
+                      00158 
+                      00159 ;==================== Main Loop ====================
+0052                  00160 MainLoop:
+                      00161     ; Check for button press (RB1) to cycle patterns
+0052   1886           00162     btfsc   BUTTON          ; Skip if button pressed (goes LOW)
+0053   2852           00163     goto    MainLoop        ; Button not pressed, continue
+                      00164     
+                      00165     ; Button pressed - first debounce delay
+0054   2098           00166     call    Debounce_Delay
+                      00167     
+                      00168     ; Check if still pressed after debounce
+0055   1886           00169     btfsc   BUTTON
+0056   2852           00170     goto    MainLoop        ; False trigger, ignore
+                      00171     
+                      00172     ; Cycle to next pattern
+0057   0AA6           00173     incf    Pattern_Index, F
+0058   3004           00174     movlw   d'4'            ; 4 patterns total (0-3)
+0059   0226           00175     subwf   Pattern_Index, W
+005A   1C03           00176     btfss   STATUS, C       ; Check if Pattern_Index >= 4
+005B   285D           00177     goto    Pattern_Valid
+005C   01A6           00178     clrf    Pattern_Index   ; Wrap around to 0
+                      00179     
+005D                  00180 Pattern_Valid:
+                      00181     ; Load new pattern
+005D   2069           00182     call    Load_Pattern
+                      00183     
+                      00184     ; Reset PWM to new pattern values
+                      00185     ; LED1 starts at MINIMUM (increasing direction)
+005E   0827           00186     movf    LED1_Min, W
+005F   00A1           00187     movwf   LED1_CurrentDuty
+0060   01A3           00188     clrf    LED1_Direction  ; 0 = increasing
+                      00189     
+                      00190     ; LED2 starts at MAXIMUM (decreasing direction)
+0061   082A           00191     movf    LED2_Max, W
+0062   00A2           00192     movwf   LED2_CurrentDuty
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0063   3001           00193     movlw   0x01
+0064   00A4           00194     movwf   LED2_Direction  ; 1 = decreasing
+                      00195     
+                      00196     ; Wait for button release with longer timeout
+0065                  00197 Wait_Release:
+0065   1C86           00198     btfss   BUTTON
+0066   2865           00199     goto    Wait_Release
+                      00200     
+                      00201     ; Extra debounce after release
+0067   2098           00202     call    Debounce_Delay
+0068   2852           00203     goto    MainLoop
+                      00204 
+                      00205 ;==================== Load Pattern from Variables (CORRECTED) ====================
+0069                  00206 Load_Pattern:
+                      00207     ; Direct pattern loading - use decfsz for reliable comparison
+                      00208     
+                      00209     ; Make a copy of Pattern_Index for testing
+0069   0826           00210     movf    Pattern_Index, W
+006A   00AC           00211     movwf   Temp
+                      00212     
+                      00213     ; Test if Pattern_Index == 0
+006B   08AC           00214     movf    Temp, F         ; Test Temp
+006C   1903           00215     btfsc   STATUS, Z
+006D   2874           00216     goto    Load_Pattern_0
+                      00217     
+                      00218     ; Test if Pattern_Index == 1
+006E   0BAC           00219     decfsz  Temp, F
+006F   2871           00220     goto    Test_Pattern_2
+0070   287D           00221     goto    Load_Pattern_1
+                      00222     
+0071                  00223 Test_Pattern_2:
+                      00224     ; Test if Pattern_Index == 2
+0071   0BAC           00225     decfsz  Temp, F
+0072   288F           00226     goto    Load_Pattern_3  ; Must be 3 or higher
+0073   2886           00227     goto    Load_Pattern_2
+                      00228 
+0074                  00229 Load_Pattern_0:
+                      00230     ; Pattern 0: Default (20-70%) - Original requirement
+0074   3014           00231     movlw   d'20'
+0075   00A7           00232     movwf   LED1_Min
+0076   3046           00233     movlw   d'70'
+0077   00A8           00234     movwf   LED1_Max
+0078   3014           00235     movlw   d'20'
+0079   00A9           00236     movwf   LED2_Min
+007A   3046           00237     movlw   d'70'
+007B   00AA           00238     movwf   LED2_Max
+007C   0008           00239     return
+                      00240 
+007D                  00241 Load_Pattern_1:
+                      00242     ; Pattern 1: Low Range (10-40%) - Dim pulsing
+007D   300A           00243     movlw   d'10'
+007E   00A7           00244     movwf   LED1_Min
+007F   3028           00245     movlw   d'40'
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0080   00A8           00246     movwf   LED1_Max
+0081   300A           00247     movlw   d'10'
+0082   00A9           00248     movwf   LED2_Min
+0083   3028           00249     movlw   d'40'
+0084   00AA           00250     movwf   LED2_Max
+0085   0008           00251     return
+                      00252 
+0086                  00253 Load_Pattern_2:
+                      00254     ; Pattern 2: High Range (60-90%) - Bright pulsing
+0086   303C           00255     movlw   d'60'
+0087   00A7           00256     movwf   LED1_Min
+0088   305A           00257     movlw   d'90'
+0089   00A8           00258     movwf   LED1_Max
+008A   303C           00259     movlw   d'60'
+008B   00A9           00260     movwf   LED2_Min
+008C   305A           00261     movlw   d'90'
+008D   00AA           00262     movwf   LED2_Max
+008E   0008           00263     return
+                      00264 
+008F                  00265 Load_Pattern_3:
+                      00266     ; Pattern 3: Full Range (5-95%) - Maximum contrast
+008F   3005           00267     movlw   d'5'
+0090   00A7           00268     movwf   LED1_Min
+0091   305F           00269     movlw   d'95'
+0092   00A8           00270     movwf   LED1_Max
+0093   3005           00271     movlw   d'5'
+0094   00A9           00272     movwf   LED2_Min
+0095   305F           00273     movlw   d'95'
+0096   00AA           00274     movwf   LED2_Max
+0097   0008           00275     return
+                      00276 
+                      00277 ;==================== Debounce Delay ====================
+0098                  00278 Debounce_Delay:
+                      00279     ; Longer debounce for more reliable button detection
+0098   30FF           00280     movlw   d'255'
+0099   00AB           00281     movwf   Button_Debounce
+009A                  00282 Debounce_Loop1:
+009A   30FF           00283     movlw   d'255'
+009B   00AC           00284     movwf   Temp
+009C                  00285 Debounce_Loop2:
+009C   0BAC           00286     decfsz  Temp, F
+009D   289C           00287     goto    Debounce_Loop2
+009E   0BAB           00288     decfsz  Button_Debounce, F
+009F   289A           00289     goto    Debounce_Loop1
+00A0   0008           00290     return
+                      00291 
+                      00292 ;==================== Interrupt Service Routine ====================
+00A1                  00293 ISR_Handler:
+                      00294     ; Only Timer0 interrupt is enabled, so must be Timer0
+00A1   110B           00295     bcf     INTCON, T0IF    ; Clear Timer0 interrupt flag
+                      00296     
+                      00297     ; Reload Timer0 for 200µs interrupt interval
+00A2   30CE           00298     movlw   d'206'
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00A3   0081           00299     movwf   TMR0
+                      00300     
+                      00301     ; Increment PWM counter
+00A4   0AA0           00302     incf    PWM_Counter, F
+                      00303     
+                      00304     ; Check if we've completed one PWM period (100 counts)
+00A5   0820           00305     movf    PWM_Counter, W
+00A6   3C64           00306     sublw   PWM_PERIOD
+00A7   1903           00307     btfsc   STATUS, Z
+00A8   28B2           00308     goto    ResetPWM
+                      00309     
+                      00310     ; Compare PWM_Counter with LED duty cycles
+                      00311     ; Turn OFF LEDs if counter exceeds their ON time
+                      00312     
+                      00313     ; LED1 comparison
+00A9   0821           00314     movf    LED1_CurrentDuty, W
+00AA   0220           00315     subwf   PWM_Counter, W
+00AB   1803           00316     btfsc   STATUS, C       ; If PWM_Counter >= LED1_CurrentDuty
+00AC   1008           00317     bcf     LED1            ; Turn OFF LED1
+                      00318     
+                      00319     ; LED2 comparison
+00AD   0822           00320     movf    LED2_CurrentDuty, W
+00AE   0220           00321     subwf   PWM_Counter, W
+00AF   1803           00322     btfsc   STATUS, C       ; If PWM_Counter >= LED2_CurrentDuty
+00B0   1088           00323     bcf     LED2            ; Turn OFF LED2
+                      00324     
+00B1   0009           00325     retfie
+                      00326 
+00B2                  00327 ResetPWM:
+                      00328     ; Start new PWM cycle
+00B2   01A0           00329     clrf    PWM_Counter
+                      00330     
+                      00331     ; Turn ON both LEDs at start of cycle
+00B3   1408           00332     bsf     LED1
+00B4   1488           00333     bsf     LED2
+                      00334     
+                      00335     ; Update duty cycles gradually
+00B5   0AA5           00336     incf    Transition_Counter, F
+00B6   0825           00337     movf    Transition_Counter, W
+00B7   3C32           00338     sublw   TRANSITION_DELAY
+00B8   1D03           00339     btfss   STATUS, Z
+00B9   28E0           00340     goto    ExitISR
+                      00341     
+                      00342     ; Time to update duty cycles (every 50 PWM periods)
+00BA   01A5           00343     clrf    Transition_Counter
+                      00344     
+                      00345     ;--- Update LED1 duty cycle ---
+00BB   0823           00346     movf    LED1_Direction, W
+00BC   1903           00347     btfsc   STATUS, Z
+00BD   28BF           00348     goto    LED1_Increase
+00BE   28C7           00349     goto    LED1_Decrease
+                      00350     
+00BF                  00351 LED1_Increase:
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00BF   0AA1           00352     incf    LED1_CurrentDuty, F
+                      00353     ; Check if reached maximum (from current pattern)
+00C0   0828           00354     movf    LED1_Max, W
+00C1   0221           00355     subwf   LED1_CurrentDuty, W
+00C2   1D03           00356     btfss   STATUS, Z
+00C3   28CE           00357     goto    Update_LED2
+                      00358     ; Reached max, change direction
+00C4   3001           00359     movlw   0x01
+00C5   00A3           00360     movwf   LED1_Direction
+00C6   28CE           00361     goto    Update_LED2
+                      00362     
+00C7                  00363 LED1_Decrease:
+00C7   03A1           00364     decf    LED1_CurrentDuty, F
+                      00365     ; Check if reached minimum (from current pattern)
+00C8   0827           00366     movf    LED1_Min, W
+00C9   0221           00367     subwf   LED1_CurrentDuty, W
+00CA   1D03           00368     btfss   STATUS, Z
+00CB   28CE           00369     goto    Update_LED2
+                      00370     ; Reached min, change direction
+00CC   01A3           00371     clrf    LED1_Direction
+00CD   28CE           00372     goto    Update_LED2
+                      00373     
+00CE                  00374 Update_LED2:
+                      00375     ;--- Update LED2 duty cycle (opposite direction) ---
+00CE   0824           00376     movf    LED2_Direction, W
+00CF   1903           00377     btfsc   STATUS, Z
+00D0   28D2           00378     goto    LED2_Increase
+00D1   28DA           00379     goto    LED2_Decrease
+                      00380     
+00D2                  00381 LED2_Increase:
+00D2   0AA2           00382     incf    LED2_CurrentDuty, F
+                      00383     ; Check if reached maximum (from current pattern)
+00D3   082A           00384     movf    LED2_Max, W
+00D4   0222           00385     subwf   LED2_CurrentDuty, W
+00D5   1D03           00386     btfss   STATUS, Z
+00D6   28E0           00387     goto    ExitISR
+                      00388     ; Reached max, change direction
+00D7   3001           00389     movlw   0x01
+00D8   00A4           00390     movwf   LED2_Direction
+00D9   28E0           00391     goto    ExitISR
+                      00392     
+00DA                  00393 LED2_Decrease:
+00DA   03A2           00394     decf    LED2_CurrentDuty, F
+                      00395     ; Check if reached minimum (from current pattern)
+00DB   0829           00396     movf    LED2_Min, W
+00DC   0222           00397     subwf   LED2_CurrentDuty, W
+00DD   1D03           00398     btfss   STATUS, Z
+00DE   28E0           00399     goto    ExitISR
+                      00400     ; Reached min, change direction
+00DF   01A4           00401     clrf    LED2_Direction
+                      00402     
+00E0                  00403 ExitISR:
+00E0   0009           00404     retfie
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00405 
+                      00406     end
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ABDEN                             00000000
+ABDOVF                            00000007
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ADCON0                            0000001F
+ADCON1                            0000009F
+ADCS0                             00000006
+ADCS1                             00000007
+ADDEN                             00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+ANS0                              00000000
+ANS1                              00000001
+ANS10                             00000002
+ANS11                             00000003
+ANS12                             00000004
+ANS13                             00000005
+ANS2                              00000002
+ANS3                              00000003
+ANS4                              00000004
+ANS5                              00000005
+ANS6                              00000006
+ANS7                              00000007
+ANS8                              00000000
+ANS9                              00000001
+ANSEL                             00000188
+ANSELH                            00000189
+BAUDCTL                           00000187
+BCLIE                             00000003
+BCLIF                             00000003
+BF                                00000000
+BRG0                              00000000
+BRG1                              00000001
+BRG10                             00000002
+BRG11                             00000003
+BRG12                             00000004
+BRG13                             00000005
+BRG14                             00000006
+BRG15                             00000007
+BRG16                             00000003
+BRG2                              00000002
+BRG3                              00000003
+BRG4                              00000004
+BRG5                              00000005
+BRG6                              00000006
+BRG7                              00000007
+BRG8                              00000000
+BRG9                              00000001
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BRGH                              00000002
+BUTTON                            PORTB,1
+Button_Debounce                   0000002B
+C                                 00000000
+C1CH0                             00000000
+C1CH1                             00000001
+C1IE                              00000005
+C1IF                              00000005
+C1OE                              00000005
+C1ON                              00000007
+C1OUT                             00000006
+C1POL                             00000004
+C1R                               00000002
+C1RSEL                            00000005
+C1SEN                             00000005
+C2CH0                             00000000
+C2CH1                             00000001
+C2IE                              00000006
+C2IF                              00000006
+C2OE                              00000005
+C2ON                              00000007
+C2OUT                             00000006
+C2POL                             00000004
+C2R                               00000002
+C2REN                             00000004
+C2RSEL                            00000004
+C2SYNC                            00000000
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCP2CON                           0000001D
+CCP2IE                            00000000
+CCP2IF                            00000000
+CCP2M0                            00000000
+CCP2M1                            00000001
+CCP2M2                            00000002
+CCP2M3                            00000003
+CCP2X                             00000005
+CCP2Y                             00000004
+CCPR1                             00000015
+CCPR1H                            00000016
+CCPR1L                            00000015
+CCPR2                             0000001B
+CCPR2H                            0000001C
+CCPR2L                            0000001B
+CHS0                              00000002
+CHS1                              00000003
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+CHS2                              00000004
+CHS3                              00000005
+CKE                               00000006
+CKP                               00000004
+CM1CON0                           00000107
+CM2CON0                           00000108
+CM2CON1                           00000109
+CREN                              00000004
+CSRC                              00000007
+D                                 00000005
+DATA_ADDRESS                      00000005
+DC                                00000001
+DC1B0                             00000004
+DC1B1                             00000005
+DC2B0                             00000004
+DC2B1                             00000005
+DEBOUNCE_DELAY                    d'20'
+D_A                               00000005
+D_NOT_A                           00000005
+Debounce_Delay                    00000098
+Debounce_Loop1                    0000009A
+Debounce_Loop2                    0000009C
+ECCPAS                            0000009C
+ECCPAS0                           00000004
+ECCPAS1                           00000005
+ECCPAS2                           00000006
+ECCPASE                           00000007
+EEADR                             0000010D
+EEADRH                            0000010F
+EECON1                            0000018C
+EECON2                            0000018D
+EEDAT                             0000010C
+EEDATA                            0000010C
+EEDATH                            0000010E
+EEIE                              00000004
+EEIF                              00000004
+EEPGD                             00000007
+ExitISR                           000000E0
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+FVREN                             00000000
+GCEN                              00000007
+GIE                               00000007
+GO                                00000001
+GO_DONE                           00000001
+GO_NOT_DONE                       00000001
+HTS                               00000002
+I2C_DATA                          00000005
+I2C_READ                          00000002
+I2C_START                         00000003
+I2C_STOP                          00000004
+INDF                              00000000
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE 13
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IOCB                              00000096
+IOCB0                             00000000
+IOCB1                             00000001
+IOCB2                             00000002
+IOCB3                             00000003
+IOCB4                             00000004
+IOCB5                             00000005
+IOCB6                             00000006
+IOCB7                             00000007
+IRCF0                             00000004
+IRCF1                             00000005
+IRCF2                             00000006
+IRP                               00000007
+ISR_Handler                       000000A1
+Init_Delay                        00000046
+LED1                              PORTD,0
+LED1_CurrentDuty                  00000021
+LED1_Decrease                     000000C7
+LED1_Direction                    00000023
+LED1_Increase                     000000BF
+LED1_Max                          00000028
+LED1_Min                          00000027
+LED2                              PORTD,1
+LED2_CurrentDuty                  00000022
+LED2_Decrease                     000000DA
+LED2_Direction                    00000024
+LED2_Increase                     000000D2
+LED2_Max                          0000002A
+LED2_Min                          00000029
+LTS                               00000001
+Load_Pattern                      00000069
+Load_Pattern_0                    00000074
+Load_Pattern_1                    0000007D
+Load_Pattern_2                    00000086
+Load_Pattern_3                    0000008F
+MC1OUT                            00000007
+MC2OUT                            00000006
+MSK                               00000093
+MSK0                              00000000
+MSK1                              00000001
+MSK2                              00000002
+MSK3                              00000003
+MSK4                              00000004
+MSK5                              00000005
+MSK6                              00000006
+MSK7                              00000007
+MainLoop                          00000052
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE 14
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+NOT_BO                            00000000
+NOT_BOR                           00000000
+NOT_DONE                          00000001
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_RC8                           00000006
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+NOT_TX8                           00000006
+NOT_W                             00000002
+NOT_WRITE                         00000002
+OERR                              00000001
+OPTION_REG                        00000081
+OSCCON                            0000008F
+OSCTUNE                           00000090
+OSFIE                             00000007
+OSFIF                             00000007
+OSTS                              00000003
+P                                 00000004
+P1M0                              00000006
+P1M1                              00000007
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PDC0                              00000000
+PDC1                              00000001
+PDC2                              00000002
+PDC3                              00000003
+PDC4                              00000004
+PDC5                              00000005
+PDC6                              00000006
+PEIE                              00000006
+PEN                               00000002
+PIE1                              0000008C
+PIE2                              0000008D
+PIR1                              0000000C
+PIR2                              0000000D
+PORTA                             00000005
+PORTB                             00000006
+PORTC                             00000007
+PORTD                             00000008
+PORTE                             00000009
+PR2                               00000092
+PRSEN                             00000007
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PSSAC0                            00000002
+PSSAC1                            00000003
+PSSBD0                            00000000
+PSSBD1                            00000001
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE 15
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PSTRCON                           0000009D
+PULSR                             00000002
+PULSS                             00000003
+PWM1CON                           0000009B
+PWM_Counter                       00000020
+PWM_PERIOD                        d'100'
+Pattern_Index                     00000026
+Pattern_Table                     00000010
+Pattern_Valid                     0000005D
+R                                 00000002
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RA6                               00000006
+RA7                               00000007
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RC0                               00000000
+RC1                               00000001
+RC2                               00000002
+RC3                               00000003
+RC4                               00000004
+RC5                               00000005
+RC6                               00000006
+RC7                               00000007
+RC8_9                             00000006
+RC9                               00000006
+RCD8                              00000000
+RCEN                              00000003
+RCIDL                             00000006
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+RD0                               00000000
+RD1                               00000001
+RD2                               00000002
+RD3                               00000003
+RD4                               00000004
+RD5                               00000005
+RD6                               00000006
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE 16
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RD7                               00000007
+RE0                               00000000
+RE1                               00000001
+RE2                               00000002
+RE3                               00000003
+READ_WRITE                        00000002
+RP0                               00000005
+RP1                               00000006
+RSEN                              00000001
+RX9                               00000006
+RX9D                              00000000
+R_NOT_W                           00000002
+R_W                               00000002
+ResetPWM                          000000B2
+S                                 00000003
+SBOREN                            00000004
+SCKP                              00000004
+SCS                               00000000
+SEN                               00000000
+SENDB                             00000003
+SMP                               00000007
+SPBRG                             00000099
+SPBRGH                            0000009A
+SPEN                              00000007
+SR0                               00000006
+SR1                               00000007
+SRCON                             00000185
+SREN                              00000005
+SSPADD                            00000093
+SSPBUF                            00000013
+SSPCON                            00000014
+SSPCON2                           00000091
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPMSK                            00000093
+SSPOV                             00000006
+SSPSTAT                           00000094
+STATUS                            00000003
+STRA                              00000000
+STRB                              00000001
+STRC                              00000002
+STRD                              00000003
+STRSYNC                           00000004
+SWDTEN                            00000000
+SYNC                              00000004
+Start                             00000030
+T0CS                              00000005
+T0IE                              00000005
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE 17
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1GINV                            00000007
+T1GIV                             00000007
+T1GSS                             00000001
+T1INSYNC                          00000002
+T1OSCEN                           00000003
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1                              0000000E
+TMR1CS                            00000001
+TMR1GE                            00000006
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRANSITION_DELAY                  d'50'
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISA6                            00000006
+TRISA7                            00000007
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000087
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE 18
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TRISC0                            00000000
+TRISC1                            00000001
+TRISC2                            00000002
+TRISC3                            00000003
+TRISC4                            00000004
+TRISC5                            00000005
+TRISC6                            00000006
+TRISC7                            00000007
+TRISD                             00000088
+TRISD0                            00000000
+TRISD1                            00000001
+TRISD2                            00000002
+TRISD3                            00000003
+TRISD4                            00000004
+TRISD5                            00000005
+TRISD6                            00000006
+TRISD7                            00000007
+TRISE                             00000089
+TRISE0                            00000000
+TRISE1                            00000001
+TRISE2                            00000002
+TRISE3                            00000003
+TRMT                              00000001
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+TX8_9                             00000006
+TX9                               00000006
+TX9D                              00000000
+TXD8                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+Temp                              0000002C
+Test_Pattern_2                    00000071
+Transition_Counter                00000025
+UA                                00000001
+ULPWUE                            00000005
+ULPWUIE                           00000002
+ULPWUIF                           00000002
+Update_LED2                       000000CE
+VCFG0                             00000004
+VCFG1                             00000005
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             00000097
+VREN                              00000007
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE 19
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+VROE                              00000006
+VRR                               00000005
+VRSS                              00000004
+W                                 00000000
+WCOL                              00000007
+WDTCON                            00000105
+WDTPS0                            00000001
+WDTPS1                            00000002
+WDTPS2                            00000003
+WDTPS3                            00000004
+WPUB                              00000095
+WPUB0                             00000000
+WPUB1                             00000001
+WPUB2                             00000002
+WPUB3                             00000003
+WPUB4                             00000004
+WPUB5                             00000005
+WPUB6                             00000006
+WPUB7                             00000007
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+WUE                               00000001
+Wait_Release                      00000065
+Z                                 00000002
+_BOR21V                           00003EFF
+_BOR40V                           00003FFF
+_BOR4V_BOR21V                     00003EFF
+_BOR4V_BOR40V                     00003FFF
+_BOREN_NSLEEP                     00003EFF
+_BOREN_OFF                        00003CFF
+_BOREN_ON                         00003FFF
+_BOREN_SBODEN                     00003DFF
+_BOR_NSLEEP                       00003EFF
+_BOR_OFF                          00003CFF
+_BOR_ON                           00003FFF
+_BOR_SBODEN                       00003DFF
+_CONFIG1                          00002007
+_CONFIG2                          00002008
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003F7F
+_CP_OFF                           00003FFF
+_CP_ON                            00003FBF
+_DEBUG_OFF                        00003FFF
+_DEBUG_ON                         00001FFF
+_DEVID1                           00002006
+_EC_OSC                           00003FFB
+_EXTRC                            00003FFF
+_EXTRCIO                          00003FFE
+_EXTRC_OSC_CLKOUT                 00003FFF
+_EXTRC_OSC_NOCLKOUT               00003FFE
+_FCMEN_OFF                        000037FF
+_FCMEN_ON                         00003FFF
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE 20
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_FOSC_EC                          00003FFB
+_FOSC_EXTRC_CLKOUT                00003FFF
+_FOSC_EXTRC_NOCLKOUT              00003FFE
+_FOSC_HS                          00003FFA
+_FOSC_INTRC_CLKOUT                00003FFD
+_FOSC_INTRC_NOCLKOUT              00003FFC
+_FOSC_LP                          00003FF8
+_FOSC_XT                          00003FF9
+_HS_OSC                           00003FFA
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_IESO_OFF                         00003BFF
+_IESO_ON                          00003FFF
+_INTOSC                           00003FFD
+_INTOSCIO                         00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LP_OSC                           00003FF8
+_LVP_OFF                          00002FFF
+_LVP_ON                           00003FFF
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FEF
+_WDTE_OFF                         00003FF7
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FF7
+_WDT_ON                           00003FFF
+_WRT_1FOURTH                      00003BFF
+_WRT_256                          00003DFF
+_WRT_HALF                         000039FF
+_WRT_OFF                          00003FFF
+_XT_OSC                           00003FF9
+__16F887                          00000001
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X---X----------- XXXXXXXXXXXXXXXX ---------------- XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX X--------------- ----------------
+2000 : -------XX------- ---------------- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   195
+Program Memory Words Free:  7997
+
+MPASM  5.47                        TASK_1.ASM   12-6-2025  16:09:44         PAGE 21
+
+
+
+
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     6 reported,     0 suppressed
+
+

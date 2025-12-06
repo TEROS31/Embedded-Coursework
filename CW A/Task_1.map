@@ -1,0 +1,85 @@
+MPLINK 4.45, Linker
+Linker Map File - Created Sat Dec 06 16:09:45 2025
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000004    program   0x000002
+                   .org_3       code   0x000010    program   0x000020
+                   .org_4       code   0x000030    program   0x000162
+    .config_2007_TASK_1.O       code   0x002007    program   0x000002
+    .config_2008_TASK_1.O       code   0x002008    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000004    0x000004      
+                            0x000010    0x00001f      
+                            0x000030    0x0000e0      
+                            0x002007    0x002008      
+            197 out of 8455 program addresses used, program memory utilization is 2%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+           Debounce_Delay   0x000098    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Debounce_Loop1   0x00009a    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Debounce_Loop2   0x00009c    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                  ExitISR   0x0000e0    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              ISR_Handler   0x0000a1    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+               Init_Delay   0x000046    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            LED1_Decrease   0x0000c7    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            LED1_Increase   0x0000bf    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            LED2_Decrease   0x0000da    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            LED2_Increase   0x0000d2    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+             Load_Pattern   0x000069    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Load_Pattern_0   0x000074    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Load_Pattern_1   0x00007d    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Load_Pattern_2   0x000086    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Load_Pattern_3   0x00008f    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 MainLoop   0x000052    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            Pattern_Table   0x000010    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            Pattern_Valid   0x00005d    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 ResetPWM   0x0000b2    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                    Start   0x000030    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Test_Pattern_2   0x000071    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              Update_LED2   0x0000ce    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+             Wait_Release   0x000065    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+            Pattern_Table   0x000010    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                    Start   0x000030    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+               Init_Delay   0x000046    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 MainLoop   0x000052    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            Pattern_Valid   0x00005d    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+             Wait_Release   0x000065    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+             Load_Pattern   0x000069    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Test_Pattern_2   0x000071    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Load_Pattern_0   0x000074    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Load_Pattern_1   0x00007d    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Load_Pattern_2   0x000086    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Load_Pattern_3   0x00008f    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Debounce_Delay   0x000098    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Debounce_Loop1   0x00009a    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Debounce_Loop2   0x00009c    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              ISR_Handler   0x0000a1    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 ResetPWM   0x0000b2    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            LED1_Increase   0x0000bf    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            LED1_Decrease   0x0000c7    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              Update_LED2   0x0000ce    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            LED2_Increase   0x0000d2    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            LED2_Decrease   0x0000da    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                  ExitISR   0x0000e0    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+
+

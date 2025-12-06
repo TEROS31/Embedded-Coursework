@@ -1,0 +1,89 @@
+MPLINK 4.45, Linker
+Linker Map File - Created Sat Nov 22 15:19:51 2025
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x0001b0
+     .config_2007_TASK1.O       code   0x002007    program   0x000002
+     .config_2008_TASK1.O       code   0x002008    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x0000d7      
+                            0x002007    0x002008      
+            218 out of 8455 program addresses used, program memory utilization is 2%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+           BUTTON_PRESSED   0x00002f    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+              DELAY_100MS   0x0000c9    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+          DELAY_100_INNER   0x0000cd    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+          DELAY_100_OUTER   0x0000cb    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+               DELAY_50MS   0x0000c0    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+           DELAY_50_INNER   0x0000c4    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+           DELAY_50_OUTER   0x0000c2    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+              DELAY_600MS   0x0000d2    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+           DELAY_600_LOOP   0x0000d4    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                DISPLAY_0   0x0000b1    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                DISPLAY_1   0x0000b4    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                DISPLAY_2   0x0000b7    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                DISPLAY_3   0x0000ba    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                DISPLAY_4   0x0000bd    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                     INIT   0x000001    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                   STATE0   0x000023    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                   STATE1   0x000035    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                   STATE2   0x000052    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                   STATE3   0x000073    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                   STATE4   0x000094    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+              STAY_STATE1   0x00004c    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+              STAY_STATE2   0x00006d    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+              STAY_STATE3   0x00008e    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                WAIT_ADC1   0x000038    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                WAIT_ADC2   0x000055    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                WAIT_ADC3   0x000076    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                WAIT_ADC4   0x000097    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+               WAIT_START   0x00002a    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                     INIT   0x000001    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                   STATE0   0x000023    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+               WAIT_START   0x00002a    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+           BUTTON_PRESSED   0x00002f    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                   STATE1   0x000035    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                WAIT_ADC1   0x000038    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+              STAY_STATE1   0x00004c    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                   STATE2   0x000052    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                WAIT_ADC2   0x000055    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+              STAY_STATE2   0x00006d    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                   STATE3   0x000073    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                WAIT_ADC3   0x000076    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+              STAY_STATE3   0x00008e    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                   STATE4   0x000094    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                WAIT_ADC4   0x000097    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                DISPLAY_0   0x0000b1    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                DISPLAY_1   0x0000b4    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                DISPLAY_2   0x0000b7    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                DISPLAY_3   0x0000ba    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+                DISPLAY_4   0x0000bd    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+               DELAY_50MS   0x0000c0    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+           DELAY_50_OUTER   0x0000c2    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+           DELAY_50_INNER   0x0000c4    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+              DELAY_100MS   0x0000c9    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+          DELAY_100_OUTER   0x0000cb    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+          DELAY_100_INNER   0x0000cd    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+              DELAY_600MS   0x0000d2    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+           DELAY_600_LOOP   0x0000d4    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW B\Task1.asm
+
+

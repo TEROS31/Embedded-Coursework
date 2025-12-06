@@ -1,0 +1,45 @@
+MPLINK 4.45, Linker
+Linker Map File - Created Mon Oct 27 14:25:30 2025
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000030
+                   .cinit    romdata   0x000018    program   0x000004
+    .config_2007_TASK_1.O       code   0x002007    program   0x000002
+    .config_2008_TASK_1.O       code   0x002008    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000019      
+                            0x002007    0x002008      
+            28 out of 8455 program addresses used, program memory utilization is 0%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    check   0x000009    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW C\Task_1.asm
+                no_button   0x000013    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW C\Task_1.asm
+                    start   0x000000    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW C\Task_1.asm
+          wait_no_release   0x000015    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW C\Task_1.asm
+         wait_yes_release   0x000010    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW C\Task_1.asm
+               yes_button   0x00000e    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW C\Task_1.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    start   0x000000    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW C\Task_1.asm
+                    check   0x000009    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW C\Task_1.asm
+               yes_button   0x00000e    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW C\Task_1.asm
+         wait_yes_release   0x000010    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW C\Task_1.asm
+                no_button   0x000013    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW C\Task_1.asm
+          wait_no_release   0x000015    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW C\Task_1.asm
+
+
