@@ -1,0 +1,8 @@
+Message[302] C:\USERS\YI XUE LEE\DESKTOP\EMBEDDED COMPUTING\CW C\TASK_2.ASM 43 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Warning[207] C:\USERS\YI XUE LEE\DESKTOP\EMBEDDED COMPUTING\CW C\TASK_2.ASM 68 : Found label after column 1. (CountFunction)
+Warning[207] C:\USERS\YI XUE LEE\DESKTOP\EMBEDDED COMPUTING\CW C\TASK_2.ASM 78 : Found label after column 1. (EvenNum)
+Warning[207] C:\USERS\YI XUE LEE\DESKTOP\EMBEDDED COMPUTING\CW C\TASK_2.ASM 81 : Found label after column 1. (RotateLeft)
+Warning[207] C:\USERS\YI XUE LEE\DESKTOP\EMBEDDED COMPUTING\CW C\TASK_2.ASM 87 : Found label after column 1. (OddNum)
+Warning[207] C:\USERS\YI XUE LEE\DESKTOP\EMBEDDED COMPUTING\CW C\TASK_2.ASM 90 : Found label after column 1. (RotateRight)
+Warning[207] C:\USERS\YI XUE LEE\DESKTOP\EMBEDDED COMPUTING\CW C\TASK_2.ASM 95 : Found label after column 1. (StoreResult)
+Warning[207] C:\USERS\YI XUE LEE\DESKTOP\EMBEDDED COMPUTING\CW C\TASK_2.ASM 117 : Found label after column 1. (HOLD)

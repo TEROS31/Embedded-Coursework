@@ -1,0 +1,161 @@
+MPLINK 4.45, Linker
+Linker Map File - Created Sun Dec 07 14:21:21 2025
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000004    program   0x000002
+                   .org_4       code   0x000030    program   0x000268
+                   .org_3       code   0x000200    program   0x000020
+                   .org_5       code   0x000300    program   0x000012
+    .config_2007_TASK_1.O       code   0x002007    program   0x000002
+    .config_2008_TASK_1.O       code   0x002008    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000004    0x000004      
+                            0x000030    0x000163      
+                            0x000200    0x00020f      
+                            0x000300    0x000308      
+                            0x002007    0x002008      
+            337 out of 8455 program addresses used, program memory utilization is 3%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+    Check_Function_Button   0x00005e    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                Deb_Loop1   0x0000fa    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                Deb_Loop2   0x0000fc    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Debounce_Delay   0x0000f8    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            Disable_Mode1   0x0000a0    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            Disable_Mode2   0x0000a3    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern0_Byte0   0x0000d8    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern0_Byte1   0x0000da    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern0_Byte2   0x0000dc    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern0_Byte3   0x0000de    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern1_Byte0   0x0000e0    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern1_Byte1   0x0000e2    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern1_Byte2   0x0000e4    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern1_Byte3   0x0000e6    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern2_Byte0   0x0000e8    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern2_Byte1   0x0000ea    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern2_Byte2   0x0000ec    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern2_Byte3   0x0000ee    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern3_Byte0   0x0000f0    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern3_Byte1   0x0000f2    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern3_Byte2   0x0000f4    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern3_Byte3   0x0000f6    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              ISR_Handler   0x000104    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+               Init_Mode1   0x00003f    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+               Init_Mode2   0x000043    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                LED_Table   0x000300    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+    Load_Pattern_From_ROM   0x0000a9    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Load_ROM_Pattern_0   0x0000b4    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Load_ROM_Pattern_1   0x0000bd    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Load_ROM_Pattern_2   0x0000c6    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Load_ROM_Pattern_3   0x0000cf    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            Long_Debounce   0x000101    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              M1_LED1_Dec   0x000130    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              M1_LED1_Inc   0x000128    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              M1_LED2_Dec   0x000142    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              M1_LED2_Inc   0x00013a    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           M1_Update_LED2   0x000136    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              M2_Backward   0x00015c    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+               M2_Display   0x000160    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+               M2_Forward   0x000154    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 MainLoop   0x000047    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Mode1_Button_Check   0x000062    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                Mode1_ISR   0x000108    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Mode1_ResetPWM   0x00011b    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Mode2_Button_Check   0x000079    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                Mode2_ISR   0x000149    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 Pattern0   0x000200    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 Pattern1   0x000204    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 Pattern2   0x000208    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 Pattern3   0x00020c    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+               Pattern_OK   0x00006d    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            Pattern_Table   0x000200    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              Setup_Mode1   0x00007a    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              Setup_Mode2   0x00008f    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                    Start   0x000030    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+          Switch_To_Mode1   0x000050    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+          Switch_To_Mode2   0x000055    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              Test_ROM_P2   0x0000b1    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+        Wait_Mode_Release   0x00005a    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+     Wait_Pattern_Release   0x000075    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    Start   0x000030    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+               Init_Mode1   0x00003f    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+               Init_Mode2   0x000043    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 MainLoop   0x000047    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+          Switch_To_Mode1   0x000050    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+          Switch_To_Mode2   0x000055    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+        Wait_Mode_Release   0x00005a    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+    Check_Function_Button   0x00005e    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Mode1_Button_Check   0x000062    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+               Pattern_OK   0x00006d    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+     Wait_Pattern_Release   0x000075    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Mode2_Button_Check   0x000079    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              Setup_Mode1   0x00007a    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              Setup_Mode2   0x00008f    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            Disable_Mode1   0x0000a0    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            Disable_Mode2   0x0000a3    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+    Load_Pattern_From_ROM   0x0000a9    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              Test_ROM_P2   0x0000b1    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Load_ROM_Pattern_0   0x0000b4    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Load_ROM_Pattern_1   0x0000bd    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Load_ROM_Pattern_2   0x0000c6    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Load_ROM_Pattern_3   0x0000cf    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern0_Byte0   0x0000d8    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern0_Byte1   0x0000da    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern0_Byte2   0x0000dc    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern0_Byte3   0x0000de    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern1_Byte0   0x0000e0    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern1_Byte1   0x0000e2    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern1_Byte2   0x0000e4    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern1_Byte3   0x0000e6    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern2_Byte0   0x0000e8    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern2_Byte1   0x0000ea    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern2_Byte2   0x0000ec    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern2_Byte3   0x0000ee    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern3_Byte0   0x0000f0    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern3_Byte1   0x0000f2    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern3_Byte2   0x0000f4    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+       Get_Pattern3_Byte3   0x0000f6    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Debounce_Delay   0x0000f8    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                Deb_Loop1   0x0000fa    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                Deb_Loop2   0x0000fc    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            Long_Debounce   0x000101    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              ISR_Handler   0x000104    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                Mode1_ISR   0x000108    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           Mode1_ResetPWM   0x00011b    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              M1_LED1_Inc   0x000128    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              M1_LED1_Dec   0x000130    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+           M1_Update_LED2   0x000136    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              M1_LED2_Inc   0x00013a    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              M1_LED2_Dec   0x000142    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                Mode2_ISR   0x000149    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+               M2_Forward   0x000154    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+              M2_Backward   0x00015c    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+               M2_Display   0x000160    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+            Pattern_Table   0x000200    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 Pattern0   0x000200    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 Pattern1   0x000204    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 Pattern2   0x000208    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                 Pattern3   0x00020c    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+                LED_Table   0x000300    program     static C:\Users\Yi Xue Lee\Desktop\Embedded Computing\CW A\Task_1.asm
+
+
